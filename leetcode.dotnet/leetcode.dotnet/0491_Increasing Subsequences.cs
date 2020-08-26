@@ -19,16 +19,16 @@ public class Solution
             return retNums;
         }
 
-        var set = new HashSet<string>();
+        var hashSet = new HashSet<long>();
         for (var i = 0; i < nums.Length - 1; i++)
         {
-            FindSubsequences(nums, i + 1, new List<int> { nums[i] }, retNums, set );
+            FindSubsequences(nums, i + 1, new List<int> { nums[i] }, retNums, hashSet);
         }
 
         return retNums;
     }
 
-    public void FindSubsequences(int[] nums, int start, IList<int> subNums, IList<IList<int>> retNums, HashSet<string> set)
+    public void FindSubsequences(int[] nums, int start, IList<int> subNums, IList<IList<int>> retNums, HashSet<long> hashSet)
     {
         if (start == nums.Length)
         {
@@ -41,16 +41,33 @@ public class Solution
             {
                 IList<int> curNums = new List<int>(subNums);
                 curNums.Add(nums[i]);
-                var curStr = string.Join("_", curNums);
-                if (!set.Contains(curStr))
+                var curHash = GetHash(curNums);
+                if (!hashSet.Contains(curHash))
                 {
-                    set.Add(curStr);
+                    hashSet.Add(curHash);
                     retNums.Add(curNums);
 
-                    FindSubsequences(nums, i + 1, curNums, retNums, set);
+                    FindSubsequences(nums, i + 1, curNums, retNums, hashSet);
                 }
             }
         }
+    }
+
+    public long GetHash(IList<int> nums)
+    {
+        long hash = 0;
+        if (nums == null || nums.Count == 0)
+        {
+            return -1;
+        }
+
+        foreach (var num in nums)
+        {
+            // num + bias should greater than 0, because if num + bias == 0, hash == 0.
+            hash = hash * (1009 % (((long)10E9) + 7)) + (num + 101);
+        }
+
+        return hash;
     }
 }
     }
