@@ -1,62 +1,73 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace leetcode.dotnet
 {
-    class _0332_Reconstruct_Itinerary
+    public class _0332_Reconstruct_Itinerary
     {
         public class Solution
         {
             public IList<string> FindItinerary(IList<IList<string>> tickets)
             {
                 var ret = new List<string>();
-                var dict = new Dictionary<string, IList<IList<string>>>();
-
-                foreach (var ticket in tickets)
+                var dict = new Dictionary<string, List<DstValue>>();
+                foreach (var t in tickets)
                 {
-                    var src = ticket[0];
-                    if (!dict.ContainsKey(src))
+                    if (!dict.TryGetValue(t[0], out var dstVal))
                     {
-                        dict.Add(src, new List<IList<string>>());
+                        dstVal = new List<DstValue>();
+                        dict.Add(t[0], dstVal);
                     }
 
-                    var ts = dict[src];
-                    ts.Add(ticket);
+                    dstVal.Add(new DstValue { Dst = t[1] });
                 }
 
-                var dict2 = new Dictionary<string, IList<IList<string>>>();
-                foreach (var src in dict.Keys)
+                foreach (var value in dict.Values)
                 {
-                    dict2.Add(src, dict[src].OrderBy(t => t[1]).ToList());
+                    value.Sort((x, y) => x.Dst.CompareTo(y.Dst));
                 }
 
-                dict = dict2;
+                var src = "JFK";
+                ret.Add(src);
 
-                var preDst = "JFK";
-                ret.Add(preDst);
-                for (var i = 1; i <= tickets.Count; i++)
-                    {
-                        var j = 0;
-                        var ts = dict[preDst];
-                        var t = ts[j++];
-                        if (i < tickets.Count)
-                        {
-                            var dst = t[1];
-                            while (!dict.ContainsKey(dst) || dict[dst].Count == 0)
-                            {
-                                t = ts[j++];
-                            }
-                        }
-
-                        preDst = t[1];
-                        ret.Add(t[1]);
-                        ts.Remove(t);
-                    }
-
+                Dfs(src, ref ret, dict, tickets.Count + 1);
                 return ret;
+            }
+
+            public void Dfs(string src, ref List<string> ret, Dictionary<string, List<DstValue>> dict, int count)
+            {
+                if (ret.Count == count)
+                {
+                    return;
+                }
+
+                if (dict.TryGetValue(src, out var dstvals))
+                {
+                    foreach (var dstval in dstvals)
+                    {
+                        if (dstval.Visited == false)
+                        {
+                            ret.Add(dstval.Dst);
+                            dstval.Visited = true;
+                            Dfs(dstval.Dst, ref ret, dict, count);
+                            if (ret.Count == count)
+                            {
+                                break;
+                            }
+
+                            ret.RemoveAt(ret.Count - 1);
+                            dstval.Visited = false;
+                        }
+                    }
+                }
+            }
+
+            public class DstValue
+            {
+                public string Dst;
+
+                public bool Visited = false;
             }
         }
     }
