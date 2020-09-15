@@ -17,7 +17,7 @@ namespace leetcode.dotnet
                 }
 
                 var pmt = BuildPartialMatchTable(needle);
-                int i = 0, j = 0;
+                int i, j = 0;
 
                 for (i = 0; i < haystack.Length && j < needle.Length; i++)
                 {
@@ -30,11 +30,15 @@ namespace leetcode.dotnet
                     {
                         j++;
                     }
+                    else
+                    {
+                        j = 0;
+                    }
                 }
 
                 if (j == needle.Length)
                 {
-                    return i - j;
+                    return i - needle.Length;
                 }
                 else
                 {
@@ -54,7 +58,7 @@ namespace leetcode.dotnet
             public int[] BuildPartialMatchTable(string pattern)
             {
                 var pmt = new int[pattern.Length];
-                int i = 0, j = 0;
+                int i, j = 0;
                 for (i = 0; i < pattern.Length; i++)
                 {
                     if (i < 2)
@@ -70,7 +74,7 @@ namespace leetcode.dotnet
 
                     if (pattern[i - 1] == pattern[j])
                     {
-                        pmt[i] = j + 1;
+                        pmt[i] = j + 1; // the prefix length = index + 1
                         j++;
                     }
                     else
