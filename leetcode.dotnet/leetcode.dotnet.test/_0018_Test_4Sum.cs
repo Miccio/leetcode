@@ -6,7 +6,7 @@ using System.Text;
 namespace leetcode.dotnet.test
 {
     [TestFixture]
-    public class _Test_0018_4Sum
+    public class _0018_Test_4Sum
     {
         [Test]
         public void Test()
