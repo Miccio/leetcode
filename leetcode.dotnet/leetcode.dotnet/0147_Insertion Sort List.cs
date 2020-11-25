@@ -18,14 +18,7 @@ namespace leetcode.dotnet
         {
             public ListNode InsertionSortList(ListNode head)
             {
-                if (head == null)
-                {
-                    return head;
-                }
-
-                var start = head;
-                var end = head;
-                while
+                return null;
             }
         }
     }
